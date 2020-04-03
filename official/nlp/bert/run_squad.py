@@ -34,6 +34,12 @@ from official.nlp.data import squad_lib as squad_lib_wp
 from official.utils.misc import distribution_utils
 from official.utils.misc import keras_utils
 
+#
+gpu_number = 0
+os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_number)
+
+
+#
 flags.DEFINE_string('vocab_file', None,
                     'The vocabulary file that the BERT model was trained on.')
 
@@ -90,6 +96,9 @@ def export_squad(model_export_path, input_meta_data):
 def main(_):
     # Users should always run this script under TF 2.x
 
+
+    print(FLAGS)
+    #
     logging.set_verbosity(logging.DEBUG)
     logging.get_absl_handler().setFormatter(None)
 

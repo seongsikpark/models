@@ -2,20 +2,66 @@
 
 source ../../../venv/bin/activate
 
-# log
-log_root='./logs'
-mkdir -p ${log_root}
-date=`date +%Y%m%d_%H%M`
-log_file=${log_root}/${date}.log
+
+
+
+
+############################################################
+# setup
+############################################################
 
 #
 SQUAD_VER=v1.1
 #SQUAD_VER=v2.0
 
+
+
+# mode - enum defined in run_squad_helper.py
+mode='train_and_eval'
+#mode='train_and_predict'
+#mode='train'
+#mode='eval'
+#mode='predict'
+#mode='export_only'
+
+
+############################################################
+# hyperparameters
+############################################################
+
 #
+BATCH_SIZE_TRAIN=32
+BATCH_SIZE_PREDICT=8
+
+#
+NUM_TRAIN_EPOCHS=2
+
+#
+MAX_SEQ_LEN=384
+
+
+
+############################################################
+# PATH setup
+############################################################
+
+#
+OUTPUT_DIR="./output"
+
+
+# BERT base model
 BERT_BASE_ROOT=~/Projects/08_BERT_MODELS_V2
 BERT_BASE_DIR=${BERT_BASE_ROOT}/uncased_L-12_H-768_A-12
 
+#
+INIT_CKPT=${BERT_BASE_DIR}/bert_model.ckpt
+
+# log
+log_root='./logs'
+
+############################################################
+# Don't touch
+############################################################
 
 #
 if [ ${SQUAD_VER} = 'v1.1' ]
@@ -33,31 +79,19 @@ else
     VERSION_2_W_NEG=True
 fi
 
-INIT_CKPT=${BERT_BASE_DIR}/bert_model.ckpt
 
-OUTPUT_DIR="./output"
+# log
+mkdir -p ${log_root}
+date=`date +%Y%m%d_%H%M`
+log_file=${log_root}/${date}.log
 
-#
-BATCH_SIZE_TRAIN=4
-BATCH_SIZE_PREDICT=4
-
-#
-NUM_TRAIN_EPOCHS=2
-
-#
-MAX_SEQ_LEN=384
-
-
-
-############################################################
-#
-############################################################
 
 #
 mkdir -p ${OUTPUT_DIR}
 
 #
 python run_squad.py \
+    --mode=${mode} \
     --input_meta_data_path=${SQUAD_DIR}/squad_${SQUAD_VER}_meta_data \
     --train_data_path=${SQUAD_DIR}/squad_${SQUAD_VER}_train.tf_record \
     --predict_file=${PREDICT_FILE} \
